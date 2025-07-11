@@ -1,16 +1,19 @@
 name: MCP Audit
 
 on:
-  workflow_dispatch:          # 🖐 Ruční spuštění z GitHubu
+  workflow_dispatch:             # 🖐 Ruční spuštění přes GitHub
+  push:
+    branches:
+      - master-aplet             # 🌿 Spouštět pouze na této větvi
   schedule:
-    - cron: '0 8 * * *'       # ⏰ Automatické spuštění každý den v 08:00
+    - cron: '0 8 * * *'          # ⏰ Každý den v 08:00 (CEST)
 
 jobs:
   audit:
-    runs-on: ubuntu-latest    # 🐧 CI běží na GitHub Ubuntu prostředí
+    runs-on: ubuntu-latest       # 🐧 GitHub CI prostředí
 
     env:
-      GH_PAT: ${{ secrets.GH_PAT }}  # 🔐 Token uložený jako GitHub Secret
+      GH_PAT: ${{ secrets.GH_PAT }}  # 🔐 Token z Secrets
 
     steps:
       - name: 🧾 Checkout repozitáře
@@ -19,12 +22,12 @@ jobs:
       - name: 🐍 Nastavení Pythonu
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  # 🔄 Můžeš změnit na jinou verzi pokud chceš
+          python-version: '3.11'
 
       - name: 📦 Instalace knihovny requests
         run: pip install requests
 
-      - name: 🔧 (Volitelně) Instalace ssh-keygen
+      - name: 🔧 Volitelná instalace ssh-keygen
         run: sudo apt update && sudo apt install openssh-client -y
 
       - name: 🕯️ Spuštění auditního agenta
